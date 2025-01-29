@@ -14,9 +14,13 @@ export class AnimalController {
   @Post(':id/feed')
   async feedAnimal(
     @Param('id') id: string,
-  ): Promise<{ id: string; feedNumber: number }> {
+  ): Promise<{ id: string; feedNumber: number; happy: string }> {
     const updatedAnimal = await this.animalService.feedAnimal(id);
-    return { id: updatedAnimal.id, feedNumber: updatedAnimal.feedNumber };
+    return {
+      id: updatedAnimal.id,
+      feedNumber: updatedAnimal.feedNumber,
+      happy: updatedAnimal.happy,
+    };
   }
 
   @Get()
