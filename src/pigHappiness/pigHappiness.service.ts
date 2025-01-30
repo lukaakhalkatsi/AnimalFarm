@@ -12,6 +12,15 @@ export class PigHappinessService {
 
   async getHappyMessage(): Promise<string> {
     const happinessDoc = await this.pigHappinessModel.findOne();
-    return happinessDoc ? happinessDoc.happy : 'Unknown Happiness';
+    return happinessDoc ? happinessDoc.happy : 'Unknown Property';
+  }
+
+  async getPigHappiness(): Promise<PigHappiness | null> {
+    try {
+      return await this.pigHappinessModel.findOne();
+    } catch (error) {
+      console.error('Error fetching pigHappiness:', error);
+      throw new Error('Error fetching pigHappiness');
+    }
   }
 }
