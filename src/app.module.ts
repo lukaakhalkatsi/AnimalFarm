@@ -4,6 +4,7 @@ import { AnimalSchema } from './animals/animal.schema';
 import { AnimalService } from './animals/animal.service';
 import { AnimalController } from './animals/animal.controller';
 import { BidzinaController } from './bidzina/bidzina.controller';
+import { MusicController } from './music/music.controller';
 import { ConfigModule } from '@nestjs/config';
 import { PigHappinessService } from './pigHappiness/pigHappiness.service';
 import { PigHappinessSchema } from './pigHappiness/pigHappiness.schema';
@@ -17,7 +18,7 @@ import { PigHappinessSchema } from './pigHappiness/pigHappiness.schema';
       { name: 'PigHappiness', schema: PigHappinessSchema },
     ]),
   ],
-  controllers: [AnimalController, BidzinaController],
+  controllers: [AnimalController, BidzinaController, MusicController],
   providers: [AnimalService, PigHappinessService],
 })
 export class AppModule {}
