@@ -17,10 +17,11 @@ export class AnimalController {
 
   @Post()
   async addAnimal(@Body() animal: Partial<Animal>): Promise<Animal> {
+    if (!animal || Object.keys(animal).length === 0) {
+      throw new BadRequestException('Animal data cannot be empty');
+    }
+
     try {
-      if (!animal || Object.keys(animal).length === 0) {
-        throw new BadRequestException('Animal data cannot be empty');
-      }
       return await this.animalService.addAnimal(animal);
     } catch (error) {
       throw new InternalServerErrorException(error.message);

@@ -16,13 +16,19 @@ export class BidzinaController {
       const happiness = await this.pigHappinessService.getPigHappiness();
 
       if (!happiness) {
+        // ✅ Throw NotFoundException directly (outside try-catch)
         throw new NotFoundException('Pig happiness status not found');
       }
 
       return happiness;
     } catch (error) {
+      // ✅ Only catch unexpected errors
+      if (error instanceof NotFoundException) {
+        throw error; // Re-throw NotFoundException so it's not wrapped
+      }
+
       throw new InternalServerErrorException(
-        'Failed to retrieve pig happiness status',
+        error.message || 'Failed to retrieve pig happiness status',
       );
     }
   }
