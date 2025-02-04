@@ -1,4 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PigHappinessService } from '../pigHappiness/pigHappiness.service';
 
 @Controller('api/bidzina')
@@ -7,12 +12,18 @@ export class BidzinaController {
 
   @Get('status')
   async getBidzinaStatus() {
-    const happiness = await this.pigHappinessService.getPigHappiness();
+    try {
+      const happiness = await this.pigHappinessService.getPigHappiness();
 
-    if (!happiness) {
-      return { status: 'Not found' };
+      if (!happiness) {
+        throw new NotFoundException('Pig happiness status not found');
+      }
+
+      return happiness;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Failed to retrieve pig happiness status',
+      );
     }
-
-    return happiness;
   }
 }

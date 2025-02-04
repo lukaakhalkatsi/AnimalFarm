@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { PigHappiness } from './pigHappiness.schema';
@@ -11,16 +11,19 @@ export class PigHappinessService {
   ) {}
 
   async getHappyMessage(): Promise<string> {
-    const happinessDoc = await this.pigHappinessModel.findOne();
-    return happinessDoc ? happinessDoc.happy : 'Unknown Property';
+    try {
+      const happinessDoc = await this.pigHappinessModel.findOne();
+      return happinessDoc ? happinessDoc.happy : 'Unknown Property';
+    } catch (error) {
+      throw new InternalServerErrorException('Error retrieving happy message');
+    }
   }
 
   async getPigHappiness(): Promise<PigHappiness | null> {
     try {
       return await this.pigHappinessModel.findOne();
     } catch (error) {
-      console.error('Error fetching pigHappiness:', error);
-      throw new Error('Error fetching pigHappiness');
+      throw new InternalServerErrorException('Error fetching pigHappiness');
     }
   }
 }
