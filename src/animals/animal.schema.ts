@@ -10,7 +10,7 @@ export interface Animal extends Document {
 
 export const AnimalSchema = new Schema({
   id: { type: String, default: uuidv4, unique: true },
-  name: { type: String, required: true },
+  name: { type: String, required: true, index: true },
   type: { type: String, required: true },
   feedNumber: { type: Number, required: true },
 });

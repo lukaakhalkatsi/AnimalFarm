@@ -12,7 +12,9 @@ import { PigHappinessSchema } from './pigHappiness/pigHappiness.schema';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(`${process.env.DATABASE_URL}`),
+    MongooseModule.forRoot(`${process.env.DATABASE_URL}`, {
+      maxPoolSize: 10,
+    }),
     MongooseModule.forFeature([{ name: 'Animal', schema: AnimalSchema }]),
     MongooseModule.forFeature([
       { name: 'PigHappiness', schema: PigHappinessSchema },
