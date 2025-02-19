@@ -8,6 +8,7 @@ import { MusicController } from './music/music.controller';
 import { ConfigModule } from '@nestjs/config';
 import { PigHappinessService } from './pigHappiness/pigHappiness.service';
 import { PigHappinessSchema } from './pigHappiness/pigHappiness.schema';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -18,6 +19,12 @@ import { PigHappinessSchema } from './pigHappiness/pigHappiness.schema';
     MongooseModule.forFeature([{ name: 'Animal', schema: AnimalSchema }]),
     MongooseModule.forFeature([
       { name: 'PigHappiness', schema: PigHappinessSchema },
+    ]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
     ]),
   ],
   controllers: [AnimalController, BidzinaController, MusicController],
