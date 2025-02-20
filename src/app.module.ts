@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { PigHappinessService } from './pigHappiness/pigHappiness.service';
 import { PigHappinessSchema } from './pigHappiness/pigHappiness.schema';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -26,6 +28,10 @@ import { ThrottlerModule } from '@nestjs/throttler';
         limit: 10,
       },
     ]),
+    CacheModule.register({
+      store: redisStore,
+      ttl: 60000,
+    }),
   ],
   controllers: [AnimalController, BidzinaController, MusicController],
   providers: [AnimalService, PigHappinessService],

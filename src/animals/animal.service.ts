@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Animal } from './animal.schema';
 import { PigHappinessService } from '../pigHappiness/pigHappiness.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class AnimalService {
   constructor(
     @InjectModel('Animal') private readonly animalModel: Model<Animal>,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly pigHappinessService: PigHappinessService,
   ) {}
 
@@ -17,7 +20,27 @@ export class AnimalService {
   }
 
   async getAnimals(): Promise<Animal[]> {
-    return this.animalModel.find().exec();
+    if (!this.cacheManager) {
+      console.error('❌ CacheManager is not initialized!');
+      return this.animalModel.find().exec();
+    }
+
+    try {
+      const cachedAnimals = await this.cacheManager.get<Animal[]>('animals');
+
+      if (cachedAnimals) {
+        return cachedAnimals;
+      }
+
+      const animals = await this.animalModel.find().exec();
+
+      await this.cacheManager.set('animals', animals);
+
+      return animals;
+    } catch (error) {
+      console.error('🔥 Error accessing cache:', error);
+      return this.animalModel.find().exec();
+    }
   }
 
   async feedAnimal(
