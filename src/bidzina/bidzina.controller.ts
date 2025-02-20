@@ -5,10 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PigHappinessService } from '../pigHappiness/pigHappiness.service';
+import { CustomLogger } from 'src/loggerService/logger.service';
 
 @Controller('api/bidzina')
 export class BidzinaController {
-  constructor(private readonly pigHappinessService: PigHappinessService) {}
+  constructor(
+    private readonly pigHappinessService: PigHappinessService,
+    private readonly logger: CustomLogger,
+  ) {}
 
   @Get('status')
   async getBidzinaStatus() {
@@ -17,6 +21,7 @@ export class BidzinaController {
 
       if (!happiness) {
         // ✅ Throw NotFoundException directly (outside try-catch)
+        this.logger.error('Pig happiness status not found');
         throw new NotFoundException('Pig happiness status not found');
       }
 

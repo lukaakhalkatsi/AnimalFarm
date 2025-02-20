@@ -5,6 +5,7 @@ import { Animal } from './animal.schema';
 import { PigHappinessService } from '../pigHappiness/pigHappiness.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { CustomLogger } from 'src/loggerService/logger.service';
 
 @Injectable()
 export class AnimalService {
@@ -12,6 +13,7 @@ export class AnimalService {
     @InjectModel('Animal') private readonly animalModel: Model<Animal>,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private readonly pigHappinessService: PigHappinessService,
+    private readonly logger: CustomLogger,
   ) {}
 
   async addAnimal(animal: Partial<Animal>): Promise<Animal> {
@@ -21,7 +23,7 @@ export class AnimalService {
 
   async getAnimals(): Promise<Animal[]> {
     if (!this.cacheManager) {
-      console.error('❌ CacheManager is not initialized!');
+      this.logger.error('❌ CacheManager is not initialized!');
       return this.animalModel.find().exec();
     }
 
@@ -36,9 +38,11 @@ export class AnimalService {
 
       await this.cacheManager.set('animals', animals);
 
+      this.logger.log('✅ Animals fetched from database.');
+
       return animals;
     } catch (error) {
-      console.error('🔥 Error accessing cache:', error);
+      this.logger.error('🔥 Error accessing cache:' + error);
       return this.animalModel.find().exec();
     }
   }

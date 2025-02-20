@@ -11,6 +11,7 @@ import { PigHappinessSchema } from './pigHappiness/pigHappiness.schema';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { CustomLogger } from './loggerService/logger.service';
 
 @Module({
   imports: [
@@ -34,6 +35,6 @@ import * as redisStore from 'cache-manager-redis-store';
     }),
   ],
   controllers: [AnimalController, BidzinaController, MusicController],
-  providers: [AnimalService, PigHappinessService],
+  providers: [AnimalService, PigHappinessService, CustomLogger],
 })
 export class AppModule {}

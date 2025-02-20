@@ -10,20 +10,26 @@ import {
 } from '@nestjs/common';
 import { AnimalService } from './animal.service';
 import { Animal } from './animal.schema';
+import { CustomLogger } from 'src/loggerService/logger.service';
 
 @Controller('api/animals')
 export class AnimalController {
-  constructor(private readonly animalService: AnimalService) {}
+  constructor(
+    private readonly animalService: AnimalService,
+    private readonly logger: CustomLogger,
+  ) {}
 
   @Post()
   async addAnimal(@Body() animal: Partial<Animal>): Promise<Animal> {
     if (!animal || Object.keys(animal).length === 0) {
+      this.logger.log('Animal data cannot be empty');
       throw new BadRequestException('Animal data cannot be empty');
     }
 
     try {
       return await this.animalService.addAnimal(animal);
     } catch (error) {
+      this.logger.error(error);
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -35,6 +41,7 @@ export class AnimalController {
     try {
       const updatedAnimal = await this.animalService.feedAnimal(id);
       if (!updatedAnimal) {
+        this.logger.log(`Animal with id ${id} not found`);
         throw new NotFoundException(`Animal with id ${id} not found`);
       }
       return {
@@ -55,6 +62,7 @@ export class AnimalController {
     try {
       return await this.animalService.getAnimals();
     } catch (error) {
+      this.logger.error(error);
       throw new InternalServerErrorException('Failed to retrieve animals');
     }
   }
