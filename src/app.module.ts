@@ -12,6 +12,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
 import { CustomLogger } from './loggerService/logger.service';
+import { HealthModule } from './health/health.module';
+import { HttpModule } from '@nestjs/axios'; // Importi
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { CustomLogger } from './loggerService/logger.service';
       store: redisStore,
       ttl: 60000,
     }),
+    HealthModule,
+    HttpModule,
   ],
   controllers: [AnimalController, BidzinaController, MusicController],
   providers: [AnimalService, PigHappinessService, CustomLogger],
